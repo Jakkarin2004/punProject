@@ -1,0 +1,434 @@
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, ScrollView, ActivityIndicator, View, Text, Alert } from 'react-native';
+import { firebase } from '../database/firebaseDb';
+import { ThemeProvider, Button, Input, Image } from 'react-native-elements'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import RNPickerSelect from 'react-native-picker-select';
+import { CheckBox } from 'react-native-elements';
+
+const UserDetailScreen = ({ route, navigation }) => {
+    const [price, setPrice] = useState('');
+    const [shippingPrice, setShippingPrice] = useState('');
+    const [brand, setBrand] = useState('');
+    const [btu, setBtu] = useState('');
+    const [typeAi, setTypeAi] = useState('');
+    const [image, setImage] = useState('');
+    const [isSelected1, setIsSelected1] = useState(false);
+    const [isSelected2, setIsSelected2] = useState(false);
+    const [isSelected3, setIsSelected3] = useState(false);
+    const [isSelected4, setIsSelected4] = useState(false);
+    const [isSelected5, setIsSelected5] = useState(false);
+    const [isSelected6, setIsSelected6] = useState(false);
+    const [isSelected7, setIsSelected7] = useState(false);
+    const [isSelected8, setIsSelected8] = useState(false);
+    const [area, setArea] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [key, setKey] = useState('');
+    const [numberViews, setNumberViews] = useState('');
+    const [topLike, setTopLike] = useState('');
+
+    useEffect(() => {
+        const { userKey } = route.params;
+        const dbRef = firebase.firestore().collection('air-conditioner').doc(userKey);
+        dbRef.get().then((res) => {
+            if (res.exists) {
+                const user = res.data();
+                setKey(res.id);
+                setPrice(user.price);
+                setShippingPrice(user.shipping_price);
+                setBrand(user.brand);
+                setTypeAi(user.type_ai);
+                setImage(user.image);
+                setBtu(user.btu);
+                setNumberViews(user.numberViews);
+                setTopLike(user.topLike);
+                setArea(user.area);
+                setIsLoading(false);
+            } else {
+                console.log('Document does not exist!');
+            }
+        });
+    }, []);
+
+    const inputValueUpdate = (val, prop) => {
+        switch (prop) {
+            case 'numberViews':
+                setNumberViews(val !== '' ? val : null);
+                break;
+            case 'topLike':
+                setTopLike(val !== '' ? val : null);
+                break;
+            default:
+                break;
+        }
+    }
+
+    const handleCheck1 = () => {
+        setIsSelected1(true);
+        setIsSelected2(false);
+        setIsSelected3(false);
+        setIsSelected4(false);
+        setIsSelected5(false);
+        setIsSelected6(false);
+        setIsSelected7(false);
+        setIsSelected8(false);
+        setTypeAi('แอร์ติดผนัง');
+    };
+
+    const handleCheck2 = () => {
+        setIsSelected1(false);
+        setIsSelected2(true);
+        setIsSelected3(false);
+        setIsSelected4(false);
+        setIsSelected5(false);
+        setIsSelected6(false);
+        setIsSelected7(false);
+        setIsSelected8(false);
+        setTypeAi('แอร์ติดฝ้า');
+    };
+    const handleCheck3 = () => {
+        setIsSelected1(false);
+        setIsSelected2(false);
+        setIsSelected3(true);
+        setIsSelected4(false);
+        setIsSelected5(false);
+        setIsSelected6(false);
+        setIsSelected7(false);
+        setIsSelected8(false);
+        setTypeAi('แอร์สำนักงาน');
+    };
+    const handleCheck4 = () => {
+        setIsSelected1(false);
+        setIsSelected2(false);
+        setIsSelected3(false);
+        setIsSelected4(true);
+        setIsSelected5(false);
+        setIsSelected6(false);
+        setIsSelected7(false);
+        setIsSelected8(false);
+        setTypeAi('แอร์พกพา');
+    };
+    const handleCheck5 = () => {
+        setIsSelected1(false);
+        setIsSelected2(false);
+        setIsSelected3(false);
+        setIsSelected4(false);
+        setIsSelected5(true);
+        setIsSelected6(false);
+        setIsSelected7(false);
+        setIsSelected8(false);
+        setTypeAi('แอร์ห้องเดี่ยว');
+    };
+    const handleCheck6 = () => {
+        setIsSelected1(false);
+        setIsSelected2(false);
+        setIsSelected3(false);
+        setIsSelected4(false);
+        setIsSelected5(false);
+        setIsSelected6(true);
+        setIsSelected7(false);
+        setIsSelected8(false);
+        setTypeAi('แอร์เซ็นทรัล');
+    };
+    const handleCheck7 = () => {
+        setIsSelected1(false);
+        setIsSelected2(false);
+        setIsSelected3(false);
+        setIsSelected4(false);
+        setIsSelected5(false);
+        setIsSelected6(false);
+        setIsSelected7(true);
+        setIsSelected8(false);
+        setTypeAi('แอร์แบบฝังฝ้า');
+    };
+    const handleCheck8 = () => {
+        setIsSelected1(false);
+        setIsSelected2(false);
+        setIsSelected3(false);
+        setIsSelected4(false);
+        setIsSelected5(false);
+        setIsSelected6(false);
+        setIsSelected7(false);
+        setIsSelected8(true);
+        setTypeAi('แอร์ระบบ VRV/VRF');
+    };
+
+    // ให้ทำการเพิ่ม handleCheck3 - handleCheck8 ตามเดิม
+
+    const updateUser = () => {
+        setIsLoading(true);
+
+        const updateDBRef = firebase.firestore().collection('air-conditioner').doc(key);
+        updateDBRef.set({
+            price: price || '',
+            shipping_price: shippingPrice || '',
+            brand: brand || '',
+            btu: btu || '',
+            image: image || '',
+            type_ai: typeAi || '',
+            area: area || [],
+            numberViews: numberViews || null,
+            topLike: topLike || null,
+        }).then(() => {
+            setKey('');
+            setPrice('');
+            setShippingPrice('');
+            setBrand('');
+            setBtu('');
+            setImage('');
+            setTypeAi('');
+            setNumberViews('');
+            setTopLike('');
+            setIsLoading(false);
+            navigation.navigate('UserScreen');
+        }).catch((error) => {
+            console.error('Error:', error);
+            setIsLoading(false);
+        });
+    };
+
+    const deleteUser = () => {
+        const dbRef = firebase.firestore().collection('air-conditioner').doc(route.params.userKey);
+        dbRef.delete().then(() => {
+            console.log("Item removed from database");
+            navigation.navigate('UserScreen');
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
+    };
+
+    const openTwoButtonAlert = () => {
+        Alert.alert(
+            'Delete User',
+            'Are you sure?',
+            [
+                { text: 'Yes', onPress: () => deleteUser() },
+                { text: 'No', onPress: () => console.log('No item was removed'), style: 'cancel' }
+            ],
+            {
+                cancelable: true
+            }
+        );
+    };
+
+    const placeholder = {
+        label: brand,
+        value: null,
+    };
+
+    const options = [
+        { label: 'Daikin', value: 'Daikin' },
+        { label: 'Mitsubishi Electric', value: 'Mitsubishi Electric' },
+        { label: 'Panasonic', value: 'Panasonic' },
+        { label: 'LG', value: 'LG' },
+        { label: 'Samsung', value: 'Samsung' },
+        { label: 'Carrier', value: 'Carrier' },
+        { label: 'Toshiba', value: 'Toshiba' },
+        { label: 'Haier', value: 'Haier' },
+    ];
+
+    return (
+        <View style={styles.container}>
+            <ScrollView >
+                <Image
+                    source={{ uri: image }}
+                    style={{ width: 200, height: 200, alignSelf: 'center' }}
+                    containerStyle={{ marginLeft: 'auto', marginRight: 'auto' }}
+                />
+                <Text>ราคา :</Text>
+                <Input
+                    placeholder={'ราคา'}
+                    value={price}
+                    onChangeText={(val) => setPrice(val)}
+                />
+                <Text>ราคาขนส่ง :</Text>
+                <Input
+                    placeholder={'ราคาขนส่ง'}
+                    value={shippingPrice}
+                    onChangeText={(val) => setShippingPrice(val)}
+                />
+                <Text>ชนิดแอร์ :</Text>
+                <Input
+                    placeholder={'ชนิดแอร์'}
+                    value={typeAi}
+                    onChangeText={(val) => setTypeAi(val)}
+                />
+                <CheckBox
+                    checked={isSelected1}
+                    onPress={handleCheck1}
+                    title={"แอร์ติดผนัง"}
+                />
+                <CheckBox
+                    checked={isSelected2}
+                    onPress={handleCheck2}
+                    title={"แอร์ติดฝ้า"}
+                />
+                <CheckBox
+                    checked={isSelected3}
+                    onPress={handleCheck3}
+                    title={"แอร์สำนักงาน"}
+                />
+                <CheckBox
+                    checked={isSelected4}
+                    onPress={handleCheck4}
+                    title={"แอร์พกพา"}
+                />
+                <CheckBox
+                    checked={isSelected5}
+                    onPress={handleCheck5}
+                    title={"แอร์ห้องเดี่ยว"}
+                />
+                <CheckBox
+                    checked={isSelected6}
+                    onPress={handleCheck6}
+                    title={"แอร์เซ็นทรัล"}
+                />
+                <CheckBox
+                    checked={isSelected7}
+                    onPress={handleCheck7}
+                    title={"แอร์แบบฝังฝ้า"}
+                />
+                <CheckBox
+                    checked={isSelected8}
+                    onPress={handleCheck8}
+                    title={"แอร์ระบบ VRV/VRF "}
+                />
+
+                <Text>ยี่ห้อแอร์ :</Text>
+                <RNPickerSelect
+                    placeholder={placeholder}
+                    items={options}
+                    onValueChange={(val) => setBrand(val)}
+                    value={brand}
+                    style={pickerSelectStyles}
+                />
+                <Text>ขนาด BTU :</Text>
+                <Input
+                    placeholder={'ขนาด BTU'}
+                    value={btu}
+                    onChangeText={(val) => setBtu(val)}
+                />
+                <Text>รูปภาพ :</Text>
+                <Input
+                    placeholder={'รูปภาพ'}
+                    value={image}
+                    onChangeText={(val) => setImage(val)}
+                />
+                <Text>ขนาดห้อง</Text>
+                <Text>ความกว้าง(M) :</Text>
+                <Input
+                    leftIcon={
+                        <Icon
+                            name='mobile'
+                            size={30}
+                            color='#0085E6'
+                        />
+                    }
+                    placeholder={'  ความกว้าง(M)'}
+                    value={numberViews || area[0]}
+                    onChangeText={(val) => inputValueUpdate(val, 'numberViews')}
+                />
+                <Text></Text>
+                <Text>ความสูง(M) :</Text>
+                <Input
+                    leftIcon={
+                        <Icon
+                            name='mobile'
+                            size={30}
+                            color='#0085E6'
+                        />
+                    }
+                    placeholder={'  ความสูง(M)'}
+                    value={topLike || area[1]}
+                    onChangeText={(val) => inputValueUpdate(val, 'topLike')}
+                />
+                <Button
+                    icon={
+                        <Icon
+                            name="wrench"
+                            size={15}
+                            color="#fff"
+                        />
+                    }
+                    title='  แก้ไข'
+                    onPress={() => updateUser()}
+                />
+                <Button
+                    icon={
+                        <Icon
+                            name="trash"
+                            size={15}
+                            color="#fff"
+                        />
+                    }
+                    title='  ลบข้อมูล'
+                    containerStyle={{
+                        marginTop: 10
+                    }}
+                    buttonStyle={{
+                        backgroundColor: "red"
+                    }}
+                    onPress={() => openTwoButtonAlert()}
+                />
+            </ScrollView>
+        </View>
+    );
+};
+
+const theme = {
+    Button: {
+        raised: true
+    }
+}
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
+    },
+    inputAndroid: {
+        fontSize: 16,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderWidth: 0.5,
+        borderColor: 'purple',
+        borderRadius: 8,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
+    },
+});
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+        overflowY: 'scroll',
+        marginVertical: 20,
+        paddingHorizontal: 20,
+    },
+    preloader: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+      label: {
+        fontSize: 16,
+        marginBottom: 10,
+      },
+      selectedText: {
+        marginTop: 10,
+        fontSize: 16,
+        fontWeight: 'bold',
+      },
+})
+
+export default UserDetailScreen;
